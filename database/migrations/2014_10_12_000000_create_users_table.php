@@ -17,13 +17,12 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('email')->unique();
-            $table->enum('role',['admin','state','local'])->nullable();
+            $table->enum('role',['admin','sub_admin','staff'])->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-            $table->unsignedBigInteger('store_id')->nullable();
-            $table->foreign('store_id')->references('id')->on('stores')->nullable();
+
         });
     }
 

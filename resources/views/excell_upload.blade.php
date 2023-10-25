@@ -8,15 +8,15 @@
                     </div>
                     <div class="card-body">
                         <div class="basic-form">
-                            <form method='POST' action='{{ route('client.excell.upload') }}' enctype="multipart/form-data">
+                            <form method='POST' action='{{ route('tb.excell.upload') }}' enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
 
 
                                     <div class="input-group mb-3">
-                                        <div class="text-warning">Please make sure your excell file is of the below format</div>
+                                        <div class="text-primary col-12">Please make sure your excell file is of the below format</div>
 
-                                        <div class="form-label form-control card-header">Excell File Format</div>
+                                        <div class="form-label form-control card-header col-12">Excell File Format</div>
 
                                        <div style="overflow-x: auto">
                                          <table class="table table-striped table-bordered">
@@ -77,16 +77,42 @@
             </tbody>
         </table>
                                     </div>
-                                           <input type="file" class="form-control" name="file" class="form-control border p-2" >
+                                    <div class="mt-4 col-12">
+                                        <input type="file" class="form-control" name="file" class="form-control border p-2" >
                                         @error('csv')
                                     <p class='text-danger inputerror'>{{ $message }} </p>
                                     @enderror
+
+                                    </div>
+
                                     </div>
 
 
+
                                 </div>
-                                <button type="submit" class="btn btn-primary">Submit <i class="fa fa-step-forward" aria-hidden="true"></i></button>
-                            </form>
+                                <button type="submit" class="btn btn-primary" onclick="showLoadingDialog()">Submit <i class="fa fa-step-forward" aria-hidden="true"></i></button>
+
+                                <script>
+                                    // Function to show the loading dialog
+                                    function showLoadingDialog() {
+                                        Swal.fire({
+                                            title: 'Please wait while uploading your data ',
+                                            allowOutsideClick: false,
+                                            showConfirmButton: false,
+
+                                            willOpen: () => {
+                                                Swal.showLoading();
+                                            }
+                                        });
+
+                                        // Simulate a time-consuming process here
+                                        // You can replace this setTimeout with your actual process
+                                        setTimeout(function() {
+                                            // After the process is complete, close the loading dialog
+                                            Swal.close();
+                                        }, 3000); // Replace 3000 with the actual duration of your process in milliseconds
+                                    }
+                                </script>                            </form>
 
                         </div>
                     </div>
