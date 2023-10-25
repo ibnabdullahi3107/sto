@@ -79,7 +79,7 @@
                             <div class="card">
                                 <div class="card-body pb-0 d-flex justify-content-between">
                                     <div>
-                                        <h4 class="mb-1">Patient Distribution by Age Group</h4>
+                                        <h4 class="mb-1">Patient Distribution by Gender</h4>
 
                                     </div>
                                     <div>
@@ -93,85 +93,88 @@
                                 <div class="chart-wrapper "  width="100" height="100">
                                     {{-- <canvas id="chart_widget_2"></canvas> --}}
 
-                                        <canvas class="" id="gender_chart" style="height: 100px; width: 100px;"></canvas>
+                                    <canvas class="" id="genderchart" style="height: 400px; width: 100%;"></canvas>
 
                                 </div>
                                 <div class="card-body">
 
-
-
-                                    @foreach ($ageGroups as $age_group )
-
-                                    <h5 class="d-inline-block mr-3">{{$age_group->age_group}} :  {{$age_group->count}}</h5>
-
-
-
-                                    @endforeach
-
-
-
-
-
-
+                                    <div class="card-body">
+                                        @foreach ($outcomeGroups as $outcomeGroup)
+                                            <h5 class="d-inline-block mr-3">{{$outcomeGroup->outcome_group}}: {{ number_format($outcomeGroup->count, 0, ',', ',') }}</h5>
+                                        @endforeach
+                                    </div>
+                                    
                             </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-
-
-
 
 
             <div class="row">
-                <div class="col-lg-12">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-body pb-0 d-flex justify-content-between">
-                                    <div>
-                                        <h4 class="mb-1">Patient Distribution by Age Group</h4>
-
-                                    </div>
-                                    <div>
-                                        <ul>
-                                            <li class="d-inline-block mr-3"><a class="text-dark" href="#">Open with Computer!</a></li>
-                                            {{-- <li class="d-inline-block mr-3"><a class="text-dark" href="#">Week</a></li>
-                                            <li class="d-inline-block"><a class="text-dark" href="#">Month</a></li> --}}
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="chart-wrapper "  width="100" height="100">
-                                    {{-- <canvas id="chart_widget_2"></canvas> --}}
-
-                                        <canvas class="" id="ageChart" style="height: 100px; width: 100px;"></canvas>
-
-                                </div>
-                                <div class="card-body">
-
-
-
-                                    @foreach ($ageGroups as $age_group )
-
-                                    <h5 class="d-inline-block mr-3">{{$age_group->age_group}} :  {{$age_group->count}}</h5>
-
-
-
-                                    @endforeach
-
-
-
-
-
-
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body pb-0 d-flex justify-content-between">
+                            <div>
+                                <h2 class="mb-1">Patient Distribution by Age Group</h2>
                             </div>
+                            <div>
+                                <ul class="list-inline">
+                                    <li class="list-inline-item"><a class="text-dark" href="#">Open with Computer!</a></li>
+                                    {{-- <li class="list-inline-item"><a class="text-dark" href="#">Week</a></li>
+                                    <li class="list-inline-item"><a class="text-dark" href="#">Month</a></li> --}}
+                                </ul>
                             </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="ageChart" style="height: 400px; width: 100%;"></canvas>
+                        </div>
+                        <div class="card-body">
+                            @foreach ($ageGroups as $age_group)
+                                <h5 class="d-inline-block mr-3">{{$age_group->age_group}}: {{$age_group->count}}</h5>
+                            @endforeach
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body pb-0 d-flex justify-content-between">
+                                <div>
+                                    <h2 class="mb-1">Patient Distribution by Negative Outcomes</h2>
+                                </div>
+                                <div>
+                                    <ul class="list-inline">
+                                        <li class="list-inline-item"><a class="text-dark" href="#">Open with Computer!</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="negativeOutcomeChart" style="height: 400px; width: 100%;"></canvas>
+                            </div>
+                            <div class="card-body">
+                                @foreach ($outcomeGroups as $outcomeGroup)
+                                    <h5 class="d-inline-block mr-3">{{ $outcomeGroup->outcome_group }}: {{ $outcomeGroup->count }}</h5>
+                                @endforeach
+                            
+                            
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
 
             <div class="row">
                 <div class="col-lg-12">
@@ -228,11 +231,6 @@
 
 
 
-
-
-
-
-
         </div>
         <!-- #/ container -->
 
@@ -242,10 +240,81 @@
 
         <script>
             window.onload = function() {
-                var ageGroups = <?php echo json_encode($ageGroups); ?>;
-
-
-                 var labels = ageGroups.map(function(item) {
+                // Total Patient Pie Chart
+                const pieChartLabels = ['Unknown Status', 'Positive Patient', 'Negative Patient'];
+                const pieChartData = <?php echo json_encode($total_patient); ?>;
+        
+                var pieChartCtx = document.getElementById('myPiechart').getContext('2d');
+                var myPieChart = new Chart(pieChartCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: pieChartLabels,
+                        datasets: [{
+                            label: 'Patient Data',
+                            data: [<?php echo json_encode($total_unknown_status); ?>, <?php echo json_encode($total_positive_patient); ?>, <?php echo json_encode($total_negative_patient); ?>],
+                            backgroundColor: [
+                                'rgb(255, 99, 132)',
+                                'rgb(54, 162, 235)',
+                                'rgb(255, 205, 86)'
+                            ],
+                            hoverOffset: 4,
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(75, 192, 192, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+        
+                // Gender Distribution Bar Chart
+                var genderChartData = {!! json_encode($genderGroups) !!};
+                var genderChartLabels = genderChartData.map(function(item) {
+                    return item.gender_group;
+                });
+        
+                var genderChartCounts = genderChartData.map(function(item) {
+                    return item.count;
+                });
+        
+                var genderChartCtx = document.getElementById('genderchart').getContext('2d');
+                var myGenderChart = new Chart(genderChartCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: genderChartLabels,
+                        datasets: [{
+                            label: 'Count',
+                            data: genderChartCounts,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.5)',
+                                'rgba(54, 162, 235, 0.5)',
+                                'rgba(255, 206, 86, 0.5)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+        
+                // Age Distribution Bar Chart
+                var ageGroupsData = <?php echo json_encode($ageGroups); ?>;
+                var ageChartLabels = ageGroupsData.map(function(item) {
                     if (item.age_group === "Child") {
                         return item.age_group + " (0-17 years)";
                     } else if (item.age_group === "Adult") {
@@ -253,24 +322,20 @@
                     } else {
                         return item.age_group + " (greater than 64 years)";
                     }
-                  });
-                //   var temp_label = labels;
-                // labels[0]= temp_label[1];
-                // labels[1]=temp_label[2];
-
-                var counts = ageGroups.map(function(item) {
-
+                });
+        
+                var ageChartCounts = ageGroupsData.map(function(item) {
                     return item.count;
                 });
-
-                var ctx = document.getElementById('ageChart').getContext('2d');
-                var ageChart = new Chart(ctx, {
+        
+                var ageChartCtx = document.getElementById('ageChart').getContext('2d');
+                var myAgeChart = new Chart(ageChartCtx, {
                     type: 'bar',
                     data: {
-                        labels: labels,
+                        labels: ageChartLabels,
                         datasets: [{
                             label: 'Number of Patients',
-                            data: counts,
+                            data: ageChartCounts,
                             backgroundColor: [
                                 'rgba(255, 99, 132, 0.2)',
                                 'rgba(54, 162, 235, 0.2)',
@@ -293,78 +358,57 @@
                         }
                     }
                 });
+        
+              // Negative Outcome Bar Chart
+                var negativeOutcomeData = <?php echo json_encode($outcomeGroups); ?>;
+                var negativeOutcomeLabels = negativeOutcomeData.map(function(item) {
+                    return item.outcome_group;  // Use 'outcome_group' instead of 'negative_outcome'
+                });
+
+                var negativeOutcomeCounts = negativeOutcomeData.map(function(item) {
+                    return item.count;
+                });
+
+                var negativeOutcomeChartCtx = document.getElementById('negativeOutcomeChart').getContext('2d');
+                var myNegativeOutcomeChart = new Chart(negativeOutcomeChartCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: negativeOutcomeLabels,
+                        datasets: [{
+                            label: 'Number of Occurrences',
+                            data: negativeOutcomeCounts,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                stepSize: 1
+                            }
+                        }
+                    }
+                });
+
             };
         </script>
+        
 
 
-        <script>
-        const labels = ['Unknown Status','Positive Patient', 'Negative Patient'];
-        const counts = <?php echo json_encode($total_patient); ?>;
-
-        // Create a pie chart
-        var ctx = document.getElementById('myPiechart').getContext('2d');
-        var myPieChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Patient Data',
-                    data: [<?php echo json_encode($total_unknown_status); ?>, <?php echo json_encode($total_positive_patient); ?>, <?php echo json_encode($total_negative_patient); ?>],
-                    backgroundColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(54, 162, 235)',
-                        'rgb(255, 205, 86)'
-                        ],
-                        hoverOffset: 4,
-                        borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(75, 192, 192, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
-    </script>
 
 
-    <script>
-        const labels = ['Unknown Status','Positive Patient', 'Negative Patient'];
-        const counts = <?php echo json_encode($total_patient); ?>;
-
-        // Create a pie chart
-        var ctx = document.getElementById('myPiechart').getContext('2d');
-        var myPieChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Patient Data',
-                    data: [<?php echo json_encode($total_unknown_status); ?>, <?php echo json_encode($total_positive_patient); ?>, <?php echo json_encode($total_negative_patient); ?>],
-                    backgroundColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(54, 162, 235)',
-                        'rgb(255, 205, 86)'
-                        ],
-                        hoverOffset: 4,
-                        borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(75, 192, 192, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
-    </script>
     </div>
 
 </x-app-layout>

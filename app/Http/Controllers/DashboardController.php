@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
-use App\Models\User;
 use App\Models\TB;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 
 
 class DashboardController extends Controller
@@ -19,6 +16,31 @@ class DashboardController extends Controller
 
     public function index()
     {
+
+        $outcomeGroups = DB::select("SELECT
+        IF(negative_outcome = 'none', 'None',
+           IF(negative_outcome = 'failure', 'Failure',
+              IF(negative_outcome = 'treatment', 'Treatment',
+                 IF(negative_outcome = 'relapse', 'Relapse', 'Other')
+              )
+           )
+        ) AS outcome_group,
+        COUNT(*) AS count
+        FROM t_b_s
+        GROUP BY outcome_group;");
+    
+    
+
+
+    // dd($outcomeGroups);
+
+
+
+
+
+
+
+
         //count total patient
         $total_patient= TB::all()->count();
         //counting positive patient
@@ -45,7 +67,7 @@ class DashboardController extends Controller
             FROM t_b_s
             GROUP BY gender_group;");
 
-        // dd($genderGroups);
+        //  dd($genderGroups);
 
 
 
@@ -75,7 +97,7 @@ class DashboardController extends Controller
 
 
 
-            return view('dashboard', compact('total_patient','total_positive_patient', 'total_negative_patient','total_unknown_status' , 'ageGroups','genderGroups' ));
+            return view('dashboard', compact('total_patient','outcomeGroups','total_positive_patient', 'total_negative_patient','total_unknown_status' , 'ageGroups','genderGroups' ));
         }
 
 
