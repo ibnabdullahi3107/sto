@@ -72,6 +72,54 @@
 
             </div>
 
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body pb-0 d-flex justify-content-between">
+                                    <div>
+                                        <h4 class="mb-1">Patient Distribution by Age Group</h4>
+
+                                    </div>
+                                    <div>
+                                        <ul>
+                                            <li class="d-inline-block mr-3"><a class="text-dark" href="#">Open with Computer!</a></li>
+                                            {{-- <li class="d-inline-block mr-3"><a class="text-dark" href="#">Week</a></li>
+                                            <li class="d-inline-block"><a class="text-dark" href="#">Month</a></li> --}}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="chart-wrapper "  width="100" height="100">
+                                    {{-- <canvas id="chart_widget_2"></canvas> --}}
+
+                                        <canvas class="" id="gender_chart" style="height: 100px; width: 100px;"></canvas>
+
+                                </div>
+                                <div class="card-body">
+
+
+
+                                    @foreach ($ageGroups as $age_group )
+
+                                    <h5 class="d-inline-block mr-3">{{$age_group->age_group}} :  {{$age_group->count}}</h5>
+
+
+
+                                    @endforeach
+
+
+
+
+
+
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
 
 
@@ -190,6 +238,8 @@
 
 
 
+
+
         <script>
             window.onload = function() {
                 var ageGroups = <?php echo json_encode($ageGroups); ?>;
@@ -248,6 +298,41 @@
 
 
         <script>
+        const labels = ['Unknown Status','Positive Patient', 'Negative Patient'];
+        const counts = <?php echo json_encode($total_patient); ?>;
+
+        // Create a pie chart
+        var ctx = document.getElementById('myPiechart').getContext('2d');
+        var myPieChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Patient Data',
+                    data: [<?php echo json_encode($total_unknown_status); ?>, <?php echo json_encode($total_positive_patient); ?>, <?php echo json_encode($total_negative_patient); ?>],
+                    backgroundColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)'
+                        ],
+                        hoverOffset: 4,
+                        borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+
+
+    <script>
         const labels = ['Unknown Status','Positive Patient', 'Negative Patient'];
         const counts = <?php echo json_encode($total_patient); ?>;
 

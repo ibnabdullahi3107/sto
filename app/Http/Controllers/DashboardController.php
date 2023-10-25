@@ -38,21 +38,25 @@ class DashboardController extends Controller
             // dd($ageGroups);
 
 
+            //gender
+            $genderGroups = DB::select("SELECT
+            IF(gender = 'male', 'Male', IF(gender = 'female', 'Female', 'Other')) AS gender_group,
+            COUNT(*) AS count
+            FROM t_b_s
+            GROUP BY gender_group;");
+
+        // dd($genderGroups);
+
 
 
         $viral_age_results = DB::select('SELECT age, viral_load FROM t_b_s');
-        $process = new Process(['python', '/path/to/your_script.py']);
-        $process->run();
 
-        // executes after the command finishes
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
+        $age_data = [];
+        $viral_load_data = [];
+        foreach ($viral_age_results as $result) {
+            $age_data[] = $result->age;
+            $viral_load_data[] = $result->viral_load;
         }
-
-       
-
-
-
 
 
         // Retrieve the earliest and latest user creation dates as DateTime objects
@@ -71,7 +75,7 @@ class DashboardController extends Controller
 
 
 
-            return view('dashboard', compact('total_patient','total_positive_patient', 'total_negative_patient','total_unknown_status' , 'ageGroups' ));
+            return view('dashboard', compact('total_patient','total_positive_patient', 'total_negative_patient','total_unknown_status' , 'ageGroups','genderGroups' ));
         }
 
 

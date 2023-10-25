@@ -5,7 +5,10 @@
                 <div class="card">
                     <div class="card-header mt-2">
                         <h4 class="card-title">Upload Excel file</h4>
+                        <a href="{{ route('dashboard') }}" class="btn btn-primary float-right">Proceed to Dashboard <i class="fa fa-step-forward" aria-hidden="true"></i></a>
+
                     </div>
+
                     <div class="card-body">
                         <div class="basic-form">
                             <form method='POST' action='{{ route('tb.excell.upload') }}' enctype="multipart/form-data">
